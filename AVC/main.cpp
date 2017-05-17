@@ -2,6 +2,7 @@
 #include <time.h>
 #include "E101.h"
 
+
 int main() {
 	/*init();
 	take_picture(); 
@@ -18,7 +19,10 @@ int main() {
 	}
 	*/
 	
+	
 	init();
+	
+		
 	while (true){	
 	take_picture();
 	
@@ -49,17 +53,17 @@ int main() {
 
 		if (sum > 0){ //Should turn to the right (more white values on the right side).
 			set_motor(2,-1*(70+(scale_int))); 
-//			sleep1(0,30);
+			//sleep1(0,30);
 			set_motor(1,(-70+(2*scale_int/3.0))); 
-//			sleep1(0,30);
-			}
+			//sleep1(0,30);
+		}
 		
 	
 		if (sum < 0){	//Should turn to the left (more white values onthe left side).
 			set_motor(2,(-70+(2*scale_int/3.0))); 
-//			sleep1(0,30);	
+			//sleep1(0,30);	
 			set_motor(1,-1*(70+(scale_int))); 
-//			sleep1(0,30);		
+			//sleep1(0,30);		
 			}
 		
 		}
@@ -67,13 +71,28 @@ int main() {
 		else {
 
 		set_motor(2,70);
-//		sleep1(0,30);
+		//sleep1(0,30);
 		set_motor(1,70);
-//		sleep1(0,30);
+		//sleep1(0,30);
 
-}
+	}
+
+	while (read_analog(0)>250){
+		char addr[15] = {'1','3','0','.','1','9','5','.','6','.','1','9','6'};
+		connect_to_server(addr, 1024);
+		char anything[24] = {'P','l','e','a','s','e'};
+		send_to_server (anything);
+		char fromServer [24];
+		receive_from_server (fromServer); 
+		send_to_server (anything);
+		
+
+
 
 		}
 
 	}
+		
+		
+}
 }
