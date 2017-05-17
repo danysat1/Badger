@@ -3,6 +3,10 @@
 #include "E101.h"
 
 
+#include <stdio.h>
+#include <time.h>
+#include "E101.h"
+
 int main() {
 	/*init();
 	take_picture(); 
@@ -19,12 +23,24 @@ int main() {
 	}
 	*/
 	
-	
 	init();
 	
+	
+		
 		
 	while (true){	
 	take_picture();
+	
+	while (read_analog(0)>250){
+		char addr[15] = {'1','3','0','.','1','9','5','.','6','.','1','9','6'};
+		connect_to_server(addr, 1024);
+		char anything[24] = {'P','l','e','a','s','e'};
+		send_to_server (anything);
+		char fromServer [24];
+		receive_from_server (fromServer); 
+		send_to_server (fromServer);
+	//	sleep1(0,1000);		
+	}
 	
 //	display_picture(1, 0);
 	int sum=0;
@@ -47,52 +63,45 @@ int main() {
 
 		double scale = ((double)temp_sum*30.0/12000.0); //Ratio of sum and max value. Take this as a percentage of max motor value.
 		int scale_int = (int)scale;
-		printf("%d %d %d \n", sum, scale_int,num_wp);
+//		printf("%d %d %d \n", sum, scale_int,num_wp);
 				
 		if (num_wp > 80){
 
 		if (sum > 0){ //Should turn to the right (more white values on the right side).
-			set_motor(2,-1*(70+(scale_int))); 
-			//sleep1(0,30);
-			set_motor(1,(-70+(2*scale_int/3.0))); 
-			//sleep1(0,30);
-		}
+			set_motor(2,-1*(43+(scale_int))); 
+//			sleep1(0,30);
+			set_motor(1,(-43+(2*scale_int/3.0))); 
+//			sleep1(0,30);
+			}
 		
 	
 		if (sum < 0){	//Should turn to the left (more white values onthe left side).
-			set_motor(2,(-70+(2*scale_int/3.0))); 
-			//sleep1(0,30);	
-			set_motor(1,-1*(70+(scale_int))); 
-			//sleep1(0,30);		
+			set_motor(2,(-43+(2*scale_int/3.0))); 
+//			sleep1(0,30);	
+			set_motor(1,-1*(43+(scale_int))); 
+//			sleep1(0,30);		
 			}
 		
 		}
 
 		else {
 
-		set_motor(2,70);
-		//sleep1(0,30);
-		set_motor(1,70);
-		//sleep1(0,30);
+		set_motor(2,32);
+//		sleep1(0,30);
+		set_motor(1,40);
+//		sleep1(0,30);
 
-	}
-
-	while (read_analog(0)>250){
-		char addr[15] = {'1','3','0','.','1','9','5','.','6','.','1','9','6'};
-		connect_to_server(addr, 1024);
-		char anything[24] = {'P','l','e','a','s','e'};
-		send_to_server (anything);
-		char fromServer [24];
-		receive_from_server (fromServer); 
-		send_to_server (anything);
-		
-
-
+}
 
 		}
 
 	}
+}
+
+
+	
+
+	
 		
 		
-}
-}
+
