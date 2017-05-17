@@ -75,30 +75,33 @@ int main() {
 			}
 		
 	
-		if (sum < 0){	//Should turn to the left (more white values onthe left side).
+	 	if (sum < 0){	//Should turn to the left (more white values onthe left side).
 			set_motor(2,(-43+(2*scale_int/3.0))); 
 //			sleep1(0,30);	
 			set_motor(1,-1*(43+(scale_int))); 
 //			sleep1(0,30);		
 			}
-		if (num_wp > 200 && sum>4000){
-		set_motor(1,0);
-		set_motor(2,-55);
-}
-		}
 		
+		}
 		else {
 
-		set_motor(2,50); //left motor
+		
+		set_motor(2,32); //left motor
 //		sleep1(0,300);
-		set_motor(1,32); 
+		set_motor(1,60); 
 //		sleep1(0,300);
+}
+		while(num_wp>160)
+
+			{
+				set_motor(1,-50);//right
+				set_motor(2,40);
+			}
 
 }
-		
+
 		}
 
-	}
 }
 
 
