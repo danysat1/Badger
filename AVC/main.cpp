@@ -2,102 +2,83 @@
 #include <time.h>
 #include "E101.h"
 
-
-#include <stdio.h>
-#include <time.h>
-#include "E101.h"
+/*AVC 2017 - Team Se7en
+ * Dylan Ewens, Daniel Satur, Chansocheat Chheang, Angitha Ramesh and Elijah-Blue Simonson*/
 
 int main() {
-	/*init();
-	take_picture(); 
-	
-	char wh[32]; 
-	int index = 0;
-	for (int col = 0; col < 320; col= col+ 10){ // from column 1 to column 320, do the following:
-		wh[index] = get_pixel(100,col,3); // get pixel at row 100 and col if white can be seen
-		index++;
-	}
-	for(int i = 0 ; i < index; i++) // for each wanted data, print them out on screen
-	{
-		printf("ind =%d wh=%d\n",i, wh[i]);
-	}
-	*/
-	
 	init();
-	
-	
-		
 		
 	while (true){	
 	take_picture();
 	
-	while (read_analog(0)>250){
-		char addr[15] = {'1','3','0','.','1','9','5','.','6','.','1','9','6'};
-		connect_to_server(addr, 1024);
+	/* Quadrant 1: 
+	 * Opening a gate controlled by an Arduino based server*/
+	
+	while (read_analog(0)>250){ 											   //If the robot is CLOSE to the gate
+		char addr[15] = {'1','3','0','.','1','9','5','.','6','.','1','9','6'}; //Servers IP Address
+		connect_to_server(addr, 1024); 										   //CONNECT to the server (IP Address, Port)
 		char anything[24] = {'P','l','e','a','s','e'};
-		send_to_server (anything);
-		char fromServer [24];
-		receive_from_server (fromServer); 
-		send_to_server (fromServer);
-	//	sleep1(0,1000);		
+		send_to_server (anything);											   //SEND message "Please" to the server
+		char fromServer [24]; 												   
+		receive_from_server (fromServer);                                      //RECEIVE a message from the server
+		send_to_server (fromServer); 										   //RETURN the message to the server, opening the gate	
 	}
 	
-//	display_picture(1, 0);
-	int sum=0;
-	int i;
-	int w;
-	int num_wp=0;
+	/* Quadrant 2: 
+	 * Following a white line using the robots camera*/
 	
-	for (i=0; i<320; i++) {
-	
+	int sum=0; 																   //INITIALISE the sum variable to be used for determining what direction to turn
+	int i;																	   //DECLARE the dummy variable to increment over (number of horizontal pixels
+	int w;																	   //DECLARE the white value variable to determine if a pixel is white or black
+	int num_wp=0;															   //INITIALISE the number of white pixels variable to see if we are at the end of a line
+	for (i=0; i<320; i++){
 		w=get_pixel(120,i, 3);
-		if (w>80) { //If white value >127/254 then white. 
-			num_wp++; //Increments the number of white pixels.
+		if (w>80) { 													       //If the white value of the pixel is more than 80 out of 254, its a WHITE PIXEL
+			num_wp++; 														   //If it meets the requirements for being a white pixel, INCREMENT THE VARIABLE
 			sum = sum + (i-160);
 		}
 		
-		double temp_sum = sum; //Needed temp variable to make negative so that calculations worked.
+		double temp_sum = sum; 												   //Temporary variable to force the sum to be positive (for use in SCALE CALCULATIONS)
+		
 		if (temp_sum <0 ){ 
 			temp_sum = temp_sum*-1;
 		} 
 
-		double scale = ((double)temp_sum*30.0/12000.0); //Ratio of sum and max value. Take this as a percentage of max motor value.
-		int scale_int = (int)scale;
-//		printf("%d %d %d \n", sum, scale_int,num_wp);
+		double scale = ((double)temp_sum*30.0/12000.0); 					   //A Ratio of the sum to its expected max value, to be used for SCALING MOTOR SPEEDS
+		int scale_int = (int)scale;											   
+		
+		//printf("%d %d %d \n", sum, scale_int,num_wp);  //Uncomment this for debugging. 
 				
-		if (num_wp > 80){
-
-		if (sum > 0){ //Should turn to the right (more white values on the right side).
-			set_motor(2,-1*(43+(scale_int))); 
-//			sleep1(0,30);
-			set_motor(1,(-43+(2*scale_int/3.0))); 
-//			sleep1(0,30);
+		if (num_wp > 80){ 													   //If MORE THAN HALF of the image is made up of white pixels...
+		if (sum > 0){ 														   //Positive sum implies that there are more white pixles on the RIGHT side of the image
+			set_motor(2,-1*(43+(scale_int))); 								   //Set the LEFT MOTOR to MODERATELY FORWARD
+			set_motor(1,(-43+(2*scale_int/3.0))); 							   //Set the RIGHT MOTOR to SLIGHTLY FORWARD
 			}
-		
-	
-		if (sum < 0){	//Should turn to the left (more white values onthe left side).
-			set_motor(2,(-43+(2*scale_int/3.0))); 
-//			sleep1(0,30);	
-			set_motor(1,-1*(43+(scale_int))); 
-//			sleep1(0,30);		
+			
+		if (sum < 0){														   //Negative sum implies that there are more white pixels on the LEFT side of the image
+			set_motor(2,(-43+(2*scale_int/3.0))); 							   //Set the LEFT MOTOR to SLIGHTLY FORWARD
+			set_motor(1,-1*(43+(scale_int))); 								   //Set the RIGHT MOTOR to MODERATELY FORWARD
 			}
-		if (num_wp > 200 && sum>4000){
-		set_motor(1,0);
-		set_motor(2,-55);
-}
+			
+		if (num_wp > 200 && sum>4000){					 				       //200 out of 320 pixels are considered white and there are more white pixels on the RIGHT				   
+			set_motor(1,0);													   //Set the RIGHT MOTOR to OFF
+			set_motor(2,-55);												   //Set the LEFT MOTOR to 55 Forwards
+			}
 		}
 		
-		else {
-
-		set_motor(2,50); //left motor
-//		sleep1(0,300);
-		set_motor(1,32); 
-//		sleep1(0,300);
-
-}
+		/* Quadrant 3: 
+		 * Dealing with intersections and forks*/
 		
+		else { 																   //Implies that the robot is at the END OF A LINE, REVERSING and turning to the LEFT
+		set_motor(2,50); 													   //Set the LEFT MOTOR to 50 BACKWARDS
+		set_motor(1,32); 													   //Set the RIGHT MOTOR to 32 BACKWARDS
 		}
-
+		}
+		
+		/*Quadrant 4:
+		 * Navigate a maze using IR sensors*/
+		
+		
 	}
 }
 
