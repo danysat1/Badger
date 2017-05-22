@@ -78,11 +78,20 @@ int main() {
 		/*Quadrant 4:
 		 * Navigate a maze using IR sensors*/
 		
-		
+		int r, g, b;
+		for (int j=0; j<320; j++){
+			r = get_pixel(120, j, 0);
+			g = get_pixel(120, j, 1);
+			b = get_pixel(120, j, 2);
+			if (r>100 && g<50 && b < 50){
+				while (true){
+					set_motor(1, -47);
+					set_motor(2, -50);
+				}
+			}
+		}
 	}
 }
-
-
 	
 
 	
