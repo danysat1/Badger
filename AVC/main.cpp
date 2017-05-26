@@ -51,18 +51,19 @@ int main() {
 				
 		if (num_wp > 80){ 													   //If MORE THAN HALF of the image is made up of white pixels...
 		if (sum > 0){ 														   //Positive sum implies that there are more white pixles on the RIGHT side of the image
-			set_motor(2,-1*(43+(scale_int))); 								   //Set the LEFT MOTOR to MODERATELY FORWARD
-			set_motor(1,(-43+(2*scale_int/3.0))); 							   //Set the RIGHT MOTOR to SLIGHTLY FORWARD
+			set_motor(2,-1*(43+(3*scale_int/4))); 								   //Set the LEFT MOTOR to MODERATELY FORWARD
+			set_motor(1,(-43+(3*scale_int/5.0))); 							   //Set the RIGHT MOTOR to SLIGHTLY FORWARD
 			}
 			
 		if (sum < 0){														   //Negative sum implies that there are more white pixels on the LEFT side of the image
-			set_motor(2,(-43+(2*scale_int/3.0))); 							   //Set the LEFT MOTOR to SLIGHTLY FORWARD
-			set_motor(1,-1*(43+(scale_int))); 								   //Set the RIGHT MOTOR to MODERATELY FORWARD
+			set_motor(2,(-43+(3*scale_int/5.0))); 							   //Set the LEFT MOTOR to SLIGHTLY FORWARD
+			set_motor(1,-1*(43+(2*scale_int/3))); 								   //Set the RIGHT MOTOR to MODERATELY FORWARD
 			}
 			
-		if (num_wp > 200 && sum>4000){					 				       //200 out of 320 pixels are considered white and there are more white pixels on the RIGHT				   
-			set_motor(1,0);													   //Set the RIGHT MOTOR to OFF
-			set_motor(2,-55);												   //Set the LEFT MOTOR to 55 Forwards
+		if (num_wp > 200 && sum>6000){					 				       //200 out of 320 pixels are considered white and there are more white pixels on the RIGHT				   
+			set_motor(1,35);													   //Set the RIGHT MOTOR to OFF
+			set_motor(2,-55);
+		//	sleep1(0,500);												   //Set the LEFT MOTOR to 55 Forwards
 			}
 		}
 		
@@ -71,7 +72,9 @@ int main() {
 		
 		else { 																   //Implies that the robot is at the END OF A LINE, REVERSING and turning to the LEFT
 		set_motor(2,50); 													   //Set the LEFT MOTOR to 50 BACKWARDS
-		set_motor(1,32); 													   //Set the RIGHT MOTOR to 32 BACKWARDS
+		set_motor(1,40); 
+		
+															   //Set the RIGHT MOTOR to 32 BACKWARDS
 		}
 		}
 		
